@@ -101,8 +101,36 @@ void FFT::DITFFT(int mode)
 	if (mode == INVERSE) for (i = 0; i < N; i++) *(XX + i) = *(XX + i) / (double)N;
 }
 
-void FFT::DITDFT(int)
+void FFT::DITDFT(int mode)
 {
-	complex<double>* ejwt;
+	complex<double>* ejw = new complex<double>[N];
+	for (int i = 0; i < N; i++)
+	{
+		ejw[i] 
+			= exp(complex<double>(0., 1.) * 2. * PI / (double)N * (double)i);
+	}
 
+	if (mode == FORWARD)
+	{
+		for (int k = 0; k < N; k++)
+		{
+			X[k] = 0.;
+			for (int n = 0; n < N; n++)
+			{
+				X[k] += x[n] * W[(n * k) % N];
+			}
+		}
+	}
+	else
+	{
+		for (int n = 0; n < N; n++)
+		{
+			x[n] = 0.;
+			for (int k = 0; k < N; k++)
+			{
+				x[n] += X[k] * W[(N - 1) + ((-n * k) % N)];
+			}
+			x[n] /= (double)N;
+		}
+	}
 }
