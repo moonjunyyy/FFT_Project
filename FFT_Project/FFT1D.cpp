@@ -4,8 +4,6 @@
 #define FORWARD  1
 #define INVERSE -1
 
-const double PI = 3.14159265358979323846264338327;
-
 // One Dimensional Constructor
 FFT::FFT(Real* data, int Nn)
 {
@@ -103,13 +101,6 @@ void FFT::DITFFT(int mode)
 
 void FFT::DITDFT(int mode)
 {
-	complex<double>* ejw = new complex<double>[N];
-	for (int i = 0; i < N; i++)
-	{
-		ejw[i] 
-			= exp(complex<double>(0., 1.) * 2. * PI / (double)N * (double)i);
-	}
-
 	if (mode == FORWARD)
 	{
 		for (int k = 0; k < N; k++)

@@ -1,6 +1,9 @@
 #pragma once
 #include <complex>
 using namespace std;
+
+const double PI = 3.14159265358979323846264338327;
+
 #ifndef __FFT
 #define __FFT
 

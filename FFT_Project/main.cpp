@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
 	FFT* fft;
 	fft = new FFT(data, dataSize);
 	fstream fio("fft.csv", ios::out);
+	if (fio.fail()) { cout << "fail to open file!\n"; return 400; }
 
 	start = chrono::system_clock::now();
 	fft->ForwardFFT();
@@ -56,6 +57,7 @@ int main(int argc, char* argv[])
 	cout << "\nAssignment 1 : Sprint 3\n\n";
 
 	fio.open("dft.csv", ios::out);
+	if (fio.fail()) { cout << "fail to open file!\n"; return 400; }
 	start = chrono::system_clock::now();
 	fft->ForwardDFT();
 	duration = chrono::system_clock::now() - start;
@@ -63,26 +65,53 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < dataSize; i++)
 		fio << i << ',' << data[i] << ',' << fft->X[i].real() << endl;
 	fio.close();
+	delete fft;
+	delete[] data;
 
 	// A1 : S4
 	cout << "\nAssignment 1 : Sprint 4\n\n";
 
-	delete fft;
 	fft = new FFT(dataSize);
 	for (int i = 0; i < dataSize; i++)
 	{
-		fft->X[i] = complex<double>(data[i], 0.);
+		fft->X[i] = (i < 10 || i > (dataSize-10) ? 1. : 0.);;
 	}
 	fio.open("ifft.csv", ios::out);
+	if (fio.fail()) { cout << "fail to open file!\n"; return 400; }
 	start = chrono::system_clock::now();
 	fft->InverseFFT();
 	duration = chrono::system_clock::now() - start;
 	cout << "Excution Time : " << duration.count() << endl;
 	for (int i = 0; i < dataSize; i++)
 		fio << i << ',' << fft->x[i].real() << ',' << fft->X[i].real() << endl;
-
 	delete fft;
-	delete[] data;
 
+	// A1 : S5
+	cout << "\nAssignment 1 : Sprint 5\n\n";
+	cout << "Iterate 10000 times of DFT and FFT for each size...\n\n";
+	for (dataSize = 128; dataSize < 4096; dataSize *= 2)
+	{
+		fft = new FFT(dataSize);
+
+		start = chrono::system_clock::now();
+		for (int i = 0; i < 10000; i++)
+		{
+			fft->ForwardDFT();
+		}
+		duration = chrono::system_clock::now() - start;
+		cout << "for DataSize " << dataSize << " DFT takes(in second) :\n" << duration.count() << endl;
+
+		start = chrono::system_clock::now();
+		for (int i = 0; i < 10000; i++)
+		{
+			fft->ForwardFFT();
+		}
+		duration = chrono::system_clock::now() - start;
+		cout << "for DataSize " << dataSize << " FFT takes(in second) :\n" << duration.count() << endl;
+
+		delete fft;
+	}
+
+	system("pause");
 	return 0;
 }
