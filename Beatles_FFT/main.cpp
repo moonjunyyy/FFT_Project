@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
 	unsigned char* img;
 	int height = fftSize / 2;
 	int width = wav.indexMax() / fftSize;
+	width = 1280;
 
 	cout << width << ", " << height << endl;
 	raw = new double[width * height];
@@ -54,12 +55,12 @@ int main(int argc, char* argv[])
 		fft.ForwardFFT();
 		for (int y = 0; y < height; y++)
 		{
-			raw[y * width + x] = 20. * log10(norm(fft.X[y]));
+			raw[y * width + x] = 10. * log10(norm(fft.X[y]));
 		}
 	}
 
 	{
-		double max = 0, min = 100;
+		double max = 0, min = 60;
 		for (int i = 0; i < width * height; i++)
 		{
 			if (raw[i] > max) max = raw[i];
@@ -88,9 +89,9 @@ int main(int argc, char* argv[])
 		for (int x = 0; x < width; x++)
 		{
 			double buf = raw[y * width + x];
-			img[3 * (y * width + x) + 2] = ((x % 100) > 50) * ((y % 100) > 50) * 255;//(buf > 255) ? (buf > 510 ? 765 - (int)buf : (int)buf - 255) : 0;
-			img[3 * (y * width + x) + 1] = ((x % 100) > 50) * ((y % 100) > 50) * 255;//(buf > 255) ? (buf > 510 ? 0 : 510 - (int)buf) : (int)buf;
-			img[3 * (y * width + x) + 0] = ((x % 100) > 50) * ((y % 100) > 50) * 255;//(buf > 255) ? 0 : 255 - (int)buf;
+			img[3 * (y * width + x) + 2] = (buf > 255) ? (buf > 510 ? 765 - (int)buf : (int)buf - 255) : 0;
+			img[3 * (y * width + x) + 1] = (buf > 255) ? (buf > 510 ? 0 : 510 - (int)buf) : (int)buf;
+			img[3 * (y * width + x) + 0] = (buf > 255) ? 0 : 255 - (int)buf;
 		}
 	}
 	bool wb = WriteBmp((char*)"Spectrum.bmp", img, width, height);
